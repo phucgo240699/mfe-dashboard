@@ -7,7 +7,7 @@ const Table = React.lazy(() => import('../pages/table'));
 
 const App = () => {
   return (
-    <BrowserRouter>
+    <BrowserRouter basename="/dashboard">
       <Routes>
         <Route path="/" element={<Dashboard />} />
         <Route path="/table" element={<Table />} />
