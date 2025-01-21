@@ -1,7 +1,9 @@
-import Dashboard from '../pages/dashboard';
-import Table from '../pages/table';
 import './index.css';
+import React from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router';
+
+const Dashboard = React.lazy(() => import('../pages/dashboard'));
+const Table = React.lazy(() => import('../pages/table'));
 
 const App = () => {
   return (
