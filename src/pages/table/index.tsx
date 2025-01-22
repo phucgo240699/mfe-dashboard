@@ -1,7 +1,12 @@
+import { Link } from 'react-router';
+
 const Table = () => {
   return (
     <main className="p-4">
-      <section className="bg-neutral-100 rounded-lg p-4 shadow mb-4">
+      <Link to={'/'} className="text-blue-400">
+        {'<<'} Dashboard
+      </Link>
+      <section className="mt-3 bg-neutral-100 rounded-lg p-4 shadow mb-4">
         <h2 className="text-xl mb-2">School Information</h2>
         <table className="min-w-full bg-white rounded-lg overflow-hidden">
           <thead>
