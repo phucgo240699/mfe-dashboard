@@ -1,16 +1,28 @@
-import Dashboard from '../pages/dashboard';
-import Table from '../pages/table';
 import './index.css';
+import React from 'react';
+import { SuspenseLayer } from '../components/SuspenseLayer';
 import { BrowserRouter, Route, Routes } from 'react-router';
+
+const Dashboard = React.lazy(() => import('../pages/dashboard'));
+const Table = React.lazy(() => import('../pages/table'));
 
 const App = () => {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Dashboard />} />
-        <Route path="/table" element={<Table />} />
-      </Routes>
-    </BrowserRouter>
+    <SuspenseLayer>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<Dashboard />} />
+          <Route
+            path="/table"
+            element={
+              <SuspenseLayer>
+                <Table />
+              </SuspenseLayer>
+            }
+          />
+        </Routes>
+      </BrowserRouter>
+    </SuspenseLayer>
   );
 };
 
