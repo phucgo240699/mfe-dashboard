@@ -1,9 +1,11 @@
 const fs = require('fs');
 const path = require('path');
 const dotenv = require('dotenv');
-const { merge } = require('webpack-merge');
-const commonConfig = require('./webpack.common');
 const webpack = require('webpack');
+const { merge } = require('webpack-merge');
+const packageJson = require('../package.json');
+const commonConfig = require('./webpack.common');
+const ModuleFederationPlugin = require('webpack/lib/container/ModuleFederationPlugin');
 
 function getEnvVariables(envVarsPath) {
   if (fs.existsSync(envVarsPath)) {
@@ -18,7 +20,7 @@ function getEnvVariables(envVarsPath) {
 }
 
 module.exports = (envs) => {
-  const { env } = envs;
+  const { env, mfe } = envs;
 
   // Load environment variables
   const commonVarsPath = path.resolve(__dirname, '..', 'env/.env');
@@ -38,6 +40,22 @@ module.exports = (envs) => {
         ...commonVars,
         ...envVars,
       }),
+      ...(mfe === 'true'
+        ? [
+            new ModuleFederationPlugin({
+              name: 'mfe-dashboard',
+              library: {
+                type: 'var',
+                name: 'mfeDashboard',
+              },
+              filename: 'remoteEntry.js',
+              exposes: {
+                './DashboardApp': './src/bootstrap',
+              },
+              shared: packageJson.dependencies,
+            }),
+          ]
+        : []),
     ],
   };
 

@@ -76,17 +76,5 @@ module.exports = {
     new HtmlWebpackPlugin({
       template: path.resolve(__dirname, '..', 'public/index.html'),
     }),
-    new ModuleFederationPlugin({
-      name: 'mfe-dashboard',
-      library: {
-        type: 'var',
-        name: 'mfeDashboard',
-      },
-      filename: 'remoteEntry.js',
-      exposes: {
-        './DashboardApp': './src/bootstrap',
-      },
-      shared: packageJson.dependencies,
-    }),
   ],
 };
