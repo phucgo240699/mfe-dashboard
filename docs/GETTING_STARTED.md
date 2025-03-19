@@ -8,13 +8,13 @@ nvm use
 
 **_NPM_**
 
-1. Isolation:
+_Isolation_:
 
 ```sh
 npm run dev
 ```
 
-2. MFE Remote:
+_MFE Remote_:
 
 ```sh
 npm run dev:mfe
@@ -34,7 +34,7 @@ docker-compose -f docker-compose-dev.yml up -d --build
 
 ```sh
 npm run build
-npm run start:build
+npm run start
 ```
 
 **_Docker_**
