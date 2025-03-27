@@ -8,7 +8,8 @@
     "start": "npx serve dist -l 8082",
     "build": "webpack --config webpack/webpack.config.js --env env=prod --env mfe=true",
     "lint": "eslint --fix \"./src/**/*.{js,jsx,ts,tsx,json}\"",
-    "format": "prettier --write \"./src/**/*.{js,jsx,ts,tsx,json,css,scss,md}\""
+    "format": "prettier --write \"./src/**/*.{js,jsx,ts,tsx,json,css,scss,md}\"",
+    "test": "vitest"
   },
   "keywords": [],
   "author": "",
@@ -21,6 +22,10 @@
     "@babel/preset-react": "^7.26.3",
     "@babel/preset-typescript": "^7.26.0",
     "@pmmmwh/react-refresh-webpack-plugin": "^0.5.15",
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^16.2.0",
+    "@testing-library/user-event": "^14.6.1",
+    "@types/jest": "^29.5.14",
     "@types/react": "^19.0.4",
     "@types/react-dom": "^19.0.2",
     "@types/react-router": "^5.1.20",
@@ -40,6 +45,7 @@
     "eslint-plugin-react-hooks": "^5.1.0",
     "html-webpack-plugin": "^5.6.3",
     "husky": "^9.1.7",
+    "jsdom": "^26.0.0",
     "lint-staged": "^15.3.0",
     "mini-css-extract-plugin": "^2.9.2",
     "postcss": "^8.4.49",
@@ -52,6 +58,7 @@
     "terser-webpack-plugin": "^5.3.11",
     "ts-loader": "^9.5.1",
     "typescript": "^5.7.3",
+    "vitest": "^3.0.9",
     "webpack": "^5.97.1",
     "webpack-cli": "^6.0.1",
     "webpack-dev-server": "^5.2.0",
@@ -74,5 +81,10 @@
     "src/**/*.{js,jsx,ts,tsx,json,css,scss,md}": [
       "prettier --write"
     ]
+  },
+  "vitest": {
+    "test": {
+      "environment": "jsdom"
+    }
   }
 }
