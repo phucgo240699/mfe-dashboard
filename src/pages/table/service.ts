@@ -1,5 +1,6 @@
 import React from 'react';
 import { WeatherForecast } from './types';
+import { useDebounce } from '@/hooks/useDebounce';
 
 const weatherData: WeatherForecast[] = [
   {
@@ -191,11 +192,45 @@ const getWeatherForecastsRequest = () =>
     setTimeout(() => resolve(weatherData), 2000);
   });
 
+const getWeatherForecastsByCriteriaRequest = (searchCritertia: string) =>
+  new Promise((resolve) => {
+    setTimeout(
+      () =>
+        resolve(
+          weatherData.filter((forecast) => {
+            const dateString = forecast.date.toISOString().slice(0, 10); // Format date as YYYY-MM-DD
+            const matchesDate = dateString.includes(
+              searchCritertia?.toLowerCase()
+            );
+            const matchesSummary = forecast.summary
+              ?.toLowerCase()
+              .includes(searchCritertia?.toLowerCase());
+            const matchesTemperatureC = forecast.temperatureC
+              .toString()
+              .includes(searchCritertia?.toLowerCase());
+            const matchesTemperatureF = forecast.temperatureF
+              .toString()
+              .includes(searchCritertia?.toLowerCase());
+
+            return (
+              matchesDate ||
+              matchesSummary ||
+              matchesTemperatureC ||
+              matchesTemperatureF
+            );
+          })
+        ),
+      2000
+    );
+  });
+
 export const useWeatherForecastRequest = () => {
+  const [searchCritertia, setSearchCritertia] = React.useState<string>('');
   const [loading, setLoading] = React.useState<boolean>(false);
   const [weatherForecasts, setWeatherForecasts] = React.useState<
     WeatherForecast[]
   >([]);
+  const debouncedSearchCriteria = useDebounce(searchCritertia, 500);
 
   const fetchWeatherForecasts = () => {
     setLoading(true);
@@ -204,13 +239,26 @@ export const useWeatherForecastRequest = () => {
       .finally(() => setLoading(false));
   };
 
+  const fetchWeatherForecastsByCriteria = () => {
+    setLoading(true);
+    getWeatherForecastsByCriteriaRequest(debouncedSearchCriteria)
+      .then((result) => setWeatherForecasts(result as WeatherForecast[]))
+      .finally(() => setLoading(false));
+  };
+
   React.useEffect(() => {
-    fetchWeatherForecasts();
-  }, []);
+    if (!!debouncedSearchCriteria) {
+      fetchWeatherForecastsByCriteria();
+    } else {
+      fetchWeatherForecasts();
+    }
+  }, [debouncedSearchCriteria]);
 
   return {
     loading,
+    searchCritertia,
     data: weatherForecasts,
+    changeSearchCriteria: setSearchCritertia,
     refetch: fetchWeatherForecasts,
   };
 };

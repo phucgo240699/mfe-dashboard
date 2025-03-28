@@ -3,6 +3,8 @@ import { useWeatherForecastRequest } from './service';
 
 const Table = () => {
   const {
+    searchCritertia,
+    changeSearchCriteria,
     data: weatherForecasts,
     loading,
     refetch,
@@ -10,9 +12,13 @@ const Table = () => {
 
   return (
     <TableComponent
-      weatherForecasts={weatherForecasts}
       loading={loading}
+      searchCriteria={searchCritertia}
+      weatherForecasts={weatherForecasts}
       onRefetch={refetch}
+      onChangeSearchCriteria={(_searchCriteria) => {
+        changeSearchCriteria(_searchCriteria);
+      }}
     />
   );
 };

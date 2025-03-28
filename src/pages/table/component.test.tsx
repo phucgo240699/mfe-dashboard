@@ -1,7 +1,7 @@
 import '@testing-library/jest-dom';
 import { vi } from 'vitest';
-import Table from './component';
-import { render, screen } from '@testing-library/react';
+import TableComponent from './component';
+import { fireEvent, render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router';
 import { WeatherForecast } from './types';
 
@@ -9,7 +9,13 @@ describe('Table', () => {
   it('renders non-loading state', () => {
     render(
       <MemoryRouter>
-        <Table weatherForecasts={[]} loading={false} onRefetch={() => {}} />
+        <TableComponent
+          searchCriteria=""
+          weatherForecasts={[]}
+          loading={false}
+          onRefetch={() => {}}
+          onChangeSearchCriteria={() => {}}
+        />
       </MemoryRouter>
     );
     const loadingElements = screen.queryAllByRole('status');
@@ -19,7 +25,13 @@ describe('Table', () => {
   it('renders the loading state', () => {
     render(
       <MemoryRouter>
-        <Table weatherForecasts={[]} loading={true} onRefetch={() => {}} />
+        <TableComponent
+          searchCriteria=""
+          weatherForecasts={[]}
+          loading={true}
+          onRefetch={() => {}}
+          onChangeSearchCriteria={() => {}}
+        />
       </MemoryRouter>
     );
     const loadingElements = screen.queryAllByRole('status');
@@ -46,26 +58,77 @@ describe('Table', () => {
     ];
     render(
       <MemoryRouter>
-        <Table
+        <TableComponent
+          searchCriteria=""
           weatherForecasts={mockData}
           loading={false}
           onRefetch={refetchMock}
+          onChangeSearchCriteria={() => {}}
         />
       </MemoryRouter>
     );
-    const forecastItems = screen.getAllByText(/degree/i);
-    expect(forecastItems.length).toBe(mockData.length * 2); // Two temperatures per forecast
+    const sunnyForecast = screen.getByText(/Sunny/i);
+    expect(sunnyForecast).toBeInTheDocument();
+    const cloudyForecast = screen.queryByText(/Cloudy/i);
+    expect(cloudyForecast).toBeInTheDocument();
   });
 
   it('calls refetch when refresh button is clicked', () => {
     const refetchMock = vi.fn();
     render(
       <MemoryRouter>
-        <Table weatherForecasts={[]} loading={false} onRefetch={refetchMock} />
+        <TableComponent
+          searchCriteria=""
+          weatherForecasts={[]}
+          loading={false}
+          onRefetch={refetchMock}
+          onChangeSearchCriteria={() => {}}
+        />
       </MemoryRouter>
     );
     const refreshButton = screen.getByText(/Refresh/i);
     refreshButton.click();
     expect(refetchMock).toHaveBeenCalledTimes(1);
+  });
+
+  it('renders the search input with the correct value', () => {
+    render(
+      <MemoryRouter>
+        <TableComponent
+          searchCriteria="Cloudy"
+          weatherForecasts={[]}
+          loading={false}
+          onRefetch={() => {}}
+          onChangeSearchCriteria={() => {}}
+        />
+      </MemoryRouter>
+    );
+
+    const searchInput = screen.getByPlaceholderText(
+      'Search by date, summary, or temperature'
+    );
+    expect(searchInput).toHaveValue('Cloudy');
+  });
+
+  it('updates search criteria when input changes', () => {
+    const onChangeSearchCriteriaMock = vi.fn();
+    render(
+      <MemoryRouter>
+        <TableComponent
+          searchCriteria=""
+          weatherForecasts={[]}
+          loading={false}
+          onRefetch={() => {}}
+          onChangeSearchCriteria={onChangeSearchCriteriaMock}
+        />
+      </MemoryRouter>
+    );
+
+    const searchInput = screen.getByPlaceholderText(
+      'Search by date, summary, or temperature'
+    );
+
+    fireEvent.change(searchInput, { target: { value: 'Sunny' } });
+    expect(onChangeSearchCriteriaMock).toHaveBeenCalledWith('Sunny');
   });
 });
